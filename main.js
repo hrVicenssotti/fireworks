@@ -74,9 +74,18 @@ class Firework {
         this.yAnterior = this.y
     }
 }
-
+class Sons {
+    constructor() {
+        this.estouro = document.createElement("audio")
+        this.estouro.src = "./sons/estouro.mp3"
+    }
+    async play(type) {
+        await this[type].play()
+    }
+}
 const fireworks = []
 const particulas = []
+const sons = []
 
 function explosao(x, y) {
     const particulaQuantidade = 500
@@ -90,16 +99,22 @@ function explosao(x, y) {
         particulas.push(new Particula(mouse.x, mouse.y, 3, cor, {x, y}))
     }
 }
-
+function backgroundColor(cor) {
+    ctx.fillStyle = cor
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+}
 function animacao() {
     requestAnimationFrame(animacao)
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    backgroundColor('rgba(0, 0, 0, 0.1)')
     fireworks.forEach((firework, indice) => {
         firework.atualizar()
         if (Math.floor(firework.y) === Math.floor(firework.yAnterior)) {
-            explosao(firework.x, firework.y)
-            fireworks.splice(indice, 1)
+            sons.push( new Sons() )
+            setTimeout(() => {
+                explosao(firework.x, firework.y)
+                backgroundColor('rgba(255, 255, 255, 0.1)')
+                fireworks.splice(indice, 1)
+            }, 100)
         }
         else {
             firework.setY()
@@ -116,6 +131,7 @@ function animacao() {
 }
 
 addEventListener('click', (event) => {
+    // document.querySelector("#tiro").play()
     const portencia = 10.5
     const radianos = Math.PI * 2
     const mouse = {
