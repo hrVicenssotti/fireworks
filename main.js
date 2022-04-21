@@ -41,7 +41,7 @@ class Particula {
         this.velocidade.y += gravidade
         this.x += this.velocidade.x
         this.y += this.velocidade.y
-        this.opacidade -= 0.003
+        this.opacidade -= 0.005
     }
 }
 class Firework {
@@ -51,7 +51,7 @@ class Firework {
         this.raio = raio
         this.cor = cor
         this.velocidade = velocidade
-        this.opacidade = 0.5
+        this.opacidade = 0.005
     }
     desenhar() {
         ctx.save()
@@ -68,27 +68,18 @@ class Firework {
         this.velocidade *= friccao
         this.velocidade -= gravidade
         this.y -= this.velocidade
-        this.opacidade += 0.005
+        this.opacidade += 0.01
     }
     setY() {
         this.yAnterior = this.y
     }
 }
-class Sons {
-    constructor() {
-        this.estouro = document.createElement("audio")
-        this.estouro.src = "./sons/estouro.mp3"
-    }
-    async play(type) {
-        await this[type].play()
-    }
-}
+
 const fireworks = []
 const particulas = []
-const sons = []
 
 function explosao(x, y) {
-    const particulaQuantidade = 500
+    const particulaQuantidade = 300
     const portencia = 12
     const radianos = Math.PI * 2 / particulaQuantidade
     const mouse = {x, y}
@@ -106,20 +97,21 @@ function backgroundColor(cor) {
 function animacao() {
     requestAnimationFrame(animacao)
     backgroundColor('rgba(0, 0, 0, 0.1)')
+
     fireworks.forEach((firework, indice) => {
         firework.atualizar()
+
         if (Math.floor(firework.y) === Math.floor(firework.yAnterior)) {
-            sons.push( new Sons() )
-            setTimeout(() => {
-                explosao(firework.x, firework.y)
-                backgroundColor('rgba(255, 255, 255, 0.1)')
-                fireworks.splice(indice, 1)
-            }, 100)
+            explosao(firework.x, firework.y)
+            backgroundColor('rgba(255, 255, 255, 0.1)')
+            fireworks.splice(indice, 1)
         }
         else {
             firework.setY()
         }
+
     })
+
     particulas.forEach((particula, indice) => {
         if (particula.opacidade > 0) {
             particula.atualizar()
@@ -128,18 +120,17 @@ function animacao() {
             particulas.splice(indice, 1)
         }
     })
+
 }
 
 addEventListener('click', (event) => {
-    // document.querySelector("#tiro").play()
     const portencia = 10.5
-    const radianos = Math.PI * 2
     const mouse = {
         x: event.clientX,
         y: event.clientY
     }
     const cor = `hsl(${Math.random() * 360}, 50%, 50%)`
-    const velocidade = portencia - (mouse.y / 50)
+    const velocidade = portencia - (mouse.y / 100)
     fireworks.push(new Firework(mouse.x, canvas.height, 7, cor, velocidade))
 })
 
